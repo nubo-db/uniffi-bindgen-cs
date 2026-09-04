@@ -1,3 +1,15 @@
+### v0.12.1+v0.32.0
+- Reject `exclude` entries that would shift a callback interface's vtable. The vtable is a
+  positional struct and Rust still declares every slot, so excluding a method of a `callback
+  interface` or of a trait exported `with_foreign` shifted every later slot and sent calls to the
+  wrong function pointer, with the final slot reading past the end of the struct. The startup
+  checksum check could not catch it, because it derives from the same post-exclusion list.
+  Excluding the whole interface is still allowed
+- Reject `exclude` entries that match nothing. Exclusion is a `retain`, so an entry matching no item
+  was indistinguishable from one that matched: a typo, or an entry naming a renamed item when
+  exclusions are applied before renaming, generated successfully and shipped the item it was meant
+  to remove
+
 ### v0.12.0+v0.32.0
 - **BREAKING** Upgrade to [UniFFI 0.32.0](https://mozilla.github.io/uniffi-rs/latest/Upgrading.html)
   - `[ByRef] bytes` / `&[u8]` arguments now cross the FFI as a borrowed `ForeignBytes` (pointer +
