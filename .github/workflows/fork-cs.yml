@@ -1,0 +1,64 @@
+# The C# suite, run the way a fork can run it.
+#
+# This file exists alongside cs.yml rather than modifying it. cs.yml is
+# upstream's and is kept byte-identical so that merges from upstream never
+# conflict there and so that nothing fork-specific can ride along in a pull
+# request sent back. cs.yml itself is disabled in this repository's Actions
+# settings; disabling is a repository setting rather than an edit, so the file
+# on disk stays untouched.
+#
+# The one thing that cannot work here is upstream's job container. It is
+# published under upstream's organisation on ghcr.io and a fork's token cannot
+# read it: the runner logs in as the fork owner and the pull returns "denied",
+# three times, before the job fails at Initialize containers. The Dockerfile
+# that produces that image is in this repository, so this builds it instead.
+#
+# Everything else is deliberately the same as cs.yml, including the pinned
+# action SHA, so the two stay legible against each other.
+
+name: C# (fork)
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container:
+      image: rust:1.88
+    steps:
+    - uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4.1.6
+      with:
+        submodules: 'true'
+    - name: Build
+      run: |
+        cargo build --release --package uniffi-bindgen-cs
+
+  test-bindings:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4.1.6
+      with:
+        submodules: 'true'
+
+    - name: Build the test-runner image
+      run: docker build --tag uniffi-bindgen-cs-test-runner .
+
+    # HOME is set for the reason upstream's version documents: the toolchain
+    # is installed under /root in the image, and the runner otherwise points
+    # HOME at /github/home where none of it is found.
+    # https://github.com/actions/runner/issues/863
+    - name: Test bindings
+      run: |
+        docker run --rm \
+          --volume "$PWD":/mounted_workdir \
+          --workdir /mounted_workdir \
+          --env HOME=/root \
+          uniffi-bindgen-cs-test-runner \
+          bash -c 'source ~/.bashrc && ./build.sh && ./generate_bindings.sh && ./test_bindings.sh'

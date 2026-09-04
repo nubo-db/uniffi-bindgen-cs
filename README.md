@@ -1,5 +1,27 @@
 # uniffi-bindgen-cs - UniFFI C# bindings generator
 
+> **This is a fork.** It is maintained by [nubo-db](https://github.com/nubo-db) for use by the
+> Nubo Windows client, and tracks [uniffi-rs](https://github.com/mozilla/uniffi-rs) releases on
+> the schedule Nubo needs. Upstream is
+> [NordSecurity/uniffi-bindgen-cs](https://github.com/NordSecurity/uniffi-bindgen-cs), and all of
+> the design and nearly all of the code is theirs and their contributors'.
+>
+> Issues are disabled here. If you are looking for the general-purpose generator, use upstream.
+> Changes we author are offered upstream as pull requests as well as being carried here.
+>
+> Beyond the pull requests it carries from upstream, this fork's own changes are two fixes to
+> the test environment, both offered upstream: the image installs the .NET runtime the test
+> project targets, and `test_bindings.sh` runs from the solution directory so its `global.json`
+> is read. Anything else we author will be offered upstream as a pull request as well as
+> carried here, and listed in [CHANGELOG.md](CHANGELOG.md).
+>
+> One thing does differ and is not offered upstream. The CI workflow here is
+> `.github/workflows/fork-cs.yml`, which builds the test-runner image from the `Dockerfile` in
+> this repository rather than pulling upstream's published one, because a fork's token cannot
+> read it. Upstream's `cs.yml` is left byte-identical and is disabled in this repository's
+> Actions settings. For the same reason `./docker.sh` will not work here as written: build the
+> image first with `docker build --tag uniffi-bindgen-cs-test-runner .` and run that tag.
+
 Generate [UniFFI](https://github.com/mozilla/uniffi-rs) bindings for C#. `uniffi-bindgen-cs` lives
 as a separate project from `uniffi-rs`, as per
 [uniffi-rs #1355](https://github.com/mozilla/uniffi-rs/issues/1355).
@@ -10,7 +32,7 @@ Minimum Rust version required to install `uniffi-bindgen-cs` is `1.88`.
 Newer Rust versions should also work fine.
 
 ```bash
-cargo install uniffi-bindgen-cs --git https://github.com/NordSecurity/uniffi-bindgen-cs --tag v0.11.0+v0.31.0
+cargo install uniffi-bindgen-cs --git https://github.com/nubo-db/uniffi-bindgen-cs --tag v0.12.0+v0.32.0
 ```
 
 # How to generate bindings
@@ -48,7 +70,10 @@ There are a few requirements depending on your target framework version.
 
 ### String/byte[]/lists size limit
 
-Currently size of strings/byte[]/lists is limited to `i32: 2^31`. Exceeding this limit will result in exceptions.
+Currently size of strings/byte[]/lists/dictionaries/sets is limited to `i32: 2^31`. Exceeding this limit will result in exceptions.
+
+This does not apply to `[ByRef] bytes` / `&[u8]` arguments, which are passed to Rust as a pointer into
+the pinned C# array rather than copied into a `RustBuffer`.
 
 # Configuration options
 
@@ -83,6 +108,7 @@ The table shows `uniffi-rs` version history for tags that were published before 
 
 | uniffi-bindgen-cs version                 | uniffi-rs version                                |
 |-------------------------------------------|--------------------------------------------------|
+| v0.12.0                                   | v0.32.0                                          |
 | v0.11.0                                   | v0.31.0                                          |
 | v0.10.0                                   | v0.29.4                                          |
 | v0.9.0                                    | v0.28.3                                          |
