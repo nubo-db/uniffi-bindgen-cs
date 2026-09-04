@@ -40,6 +40,15 @@ jobs:
       run: |
         cargo build --release --package uniffi-bindgen-cs
 
+    # The generator's own unit tests. AGENTS.md says there is no cargo test
+    # integration, and that was true until the exclusion guards arrived with
+    # tests attached. Upstream's workflow does not run these, so without this
+    # step they would exist and never execute, which is worth less than not
+    # writing them.
+    - name: Test the generator
+      run: |
+        cargo test --package uniffi-bindgen-cs
+
   test-bindings:
     runs-on: ubuntu-latest
     steps:
