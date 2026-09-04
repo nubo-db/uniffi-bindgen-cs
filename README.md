@@ -9,9 +9,18 @@
 > Issues are disabled here. If you are looking for the general-purpose generator, use upstream.
 > Changes we author are offered upstream as pull requests as well as being carried here.
 >
-> This fork carries no source changes of its own today: it is upstream plus pull requests
-> that are open there. Anything we author will be offered upstream as a pull request as
-> well as carried here, and listed in [CHANGELOG.md](CHANGELOG.md).
+> Beyond the pull requests it carries from upstream, this fork's own changes are two fixes to
+> the test environment, both offered upstream: the image installs the .NET runtime the test
+> project targets, and `test_bindings.sh` runs from the solution directory so its `global.json`
+> is read. Anything else we author will be offered upstream as a pull request as well as
+> carried here, and listed in [CHANGELOG.md](CHANGELOG.md).
+>
+> One thing does differ and is not offered upstream. The CI workflow here is
+> `.github/workflows/fork-cs.yml`, which builds the test-runner image from the `Dockerfile` in
+> this repository rather than pulling upstream's published one, because a fork's token cannot
+> read it. Upstream's `cs.yml` is left byte-identical and is disabled in this repository's
+> Actions settings. For the same reason `./docker.sh` will not work here as written: build the
+> image first with `docker build --tag uniffi-bindgen-cs-test-runner .` and run that tag.
 
 Generate [UniFFI](https://github.com/mozilla/uniffi-rs) bindings for C#. `uniffi-bindgen-cs` lives
 as a separate project from `uniffi-rs`, as per
