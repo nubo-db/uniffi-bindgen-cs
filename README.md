@@ -1,5 +1,18 @@
 # uniffi-bindgen-cs - UniFFI C# bindings generator
 
+> **This is a fork.** It is maintained by [nubo-db](https://github.com/nubo-db) for use by the
+> Nubo Windows client, and tracks [uniffi-rs](https://github.com/mozilla/uniffi-rs) releases on
+> the schedule Nubo needs. Upstream is
+> [NordSecurity/uniffi-bindgen-cs](https://github.com/NordSecurity/uniffi-bindgen-cs), and all of
+> the design and nearly all of the code is theirs and their contributors'.
+>
+> Issues are disabled here. If you are looking for the general-purpose generator, use upstream.
+> Changes we author are offered upstream as pull requests as well as being carried here.
+>
+> This fork carries no source changes of its own today: it is upstream plus pull requests
+> that are open there. Anything we author will be offered upstream as a pull request as
+> well as carried here, and listed in [CHANGELOG.md](CHANGELOG.md).
+
 Generate [UniFFI](https://github.com/mozilla/uniffi-rs) bindings for C#. `uniffi-bindgen-cs` lives
 as a separate project from `uniffi-rs`, as per
 [uniffi-rs #1355](https://github.com/mozilla/uniffi-rs/issues/1355).
@@ -10,7 +23,7 @@ Minimum Rust version required to install `uniffi-bindgen-cs` is `1.88`.
 Newer Rust versions should also work fine.
 
 ```bash
-cargo install uniffi-bindgen-cs --git https://github.com/NordSecurity/uniffi-bindgen-cs --tag v0.12.0+v0.32.0
+cargo install uniffi-bindgen-cs --git https://github.com/nubo-db/uniffi-bindgen-cs --tag v0.12.0+v0.32.0
 ```
 
 # How to generate bindings
